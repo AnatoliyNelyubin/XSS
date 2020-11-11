@@ -4,6 +4,15 @@ app = Flask(__name__)
 
 current_message = ""
 
+escaped = ""
+
+html_escape_table = {
+    "&": "&amp;",
+    '"': "&quot;",
+    "'": "&apos;",
+    ">": "&gt;",
+    "<": "&lt;",
+    }
 
 @app.route('/', methods=["GET", "POST"])
 def save_message():
@@ -17,7 +26,8 @@ def save_message():
 
 @app.route('/xss')
 def view_message():
-    return render_template("view_message.html", message=current_message)
+    escaped = "".join([html_escape_table.get(x,x) for x in current_message])
+    return render_template("view_message.html", message=current_message, protected_message=escaped)
 
 
 if __name__ == '__main__':
